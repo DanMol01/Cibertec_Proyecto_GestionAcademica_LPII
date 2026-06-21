@@ -20,6 +20,26 @@ public class CursoHorarioServiceImpl implements CursoHorarioService {
     }
 
     @Override
+    public void registrar(CursoHorario obj) {
+        cursoHorarioRepository.save(obj);
+    }
+
+    @Override
+    public void actualizar(CursoHorario obj) {
+        cursoHorarioRepository.save(obj);
+    }
+
+    @Override
+    public void desactivar(int id) {
+        CursoHorario ch = buscarPorId(id);
+
+        if (ch != null) {
+            ch.setEstado("Inactivo");
+            cursoHorarioRepository.save(ch);
+        }
+    }
+
+    @Override
     public CursoHorario buscarPorId(int id) {
         return cursoHorarioRepository.findById(id).orElse(null);
     }

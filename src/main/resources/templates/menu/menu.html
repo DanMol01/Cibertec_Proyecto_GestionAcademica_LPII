@@ -38,11 +38,18 @@
 			    <i class="bi bi-clock"></i>
 			    Gestionar Horarios
 			</a>
+			
+			<a th:href="@{/gestioncursohorario/lista}" class="btn btn-light text-start">
+			    <i class="bi bi-calendar-check"></i>
+			    Gestionar Curso Horario
+			</a>
 
 			<a th:href="@{/gestionusuario/lista}" class="btn btn-light text-start">
 			    <i class="bi bi-people"></i>
 			    Gestionar Usuarios
 			</a>
+			
+			
 
             <a th:href="@{/gestionlogin/logout}" class="btn btn-danger text-start mt-3">
                 <i class="bi bi-box-arrow-right"></i>
@@ -889,7 +896,164 @@
 			</div>
 			<!-- Fin modal Horario-->
 		</div>
-		
+		<div th:if="${vista == 'cursoHorarios'}">
+		    <div class="card shadow">
+		        <div class="card-header bg-primary text-white">
+		            <h3 class="mb-0">Gestión Curso Horario</h3>
+		        </div>
+
+		        <div class="card-body">
+
+		            <div class="mb-3">
+		                <button id="btnNuevoCursoHorario"
+		                        class="btn btn-success"
+		                        data-bs-toggle="modal"
+		                        data-bs-target="#modalCursoHorario">
+		                    <i class="bi bi-plus-circle"></i>
+		                    Nuevo curso horario
+		                </button>
+		            </div>
+
+		            <table id="tablaCursoHorarios"
+		                   class="table table-bordered table-hover table-striped">
+		                <thead class="table-dark">
+		                    <tr>
+		                        <th>ID</th>
+		                        <th>Curso</th>
+		                        <th>Horario</th>
+		                        <th>Día</th>
+		                        <th>Hora inicio</th>
+		                        <th>Hora fin</th>
+		                        <th>Vacantes</th>
+		                        <th>Estado</th>
+		                        <th>Acciones</th>
+		                    </tr>
+		                </thead>
+
+		                <tbody>
+		                    <tr th:each="ch : ${cursoHorarios}">
+		                        <td th:text="${ch.idCursoHorario}"></td>
+		                        <td th:text="${ch.curso.nombre}"></td>
+		                        <td th:text="${ch.horario.descripcion}"></td>
+		                        <td th:text="${ch.horario.diaSemana}"></td>
+		                        <td th:text="${ch.horario.horaInicio}"></td>
+		                        <td th:text="${ch.horario.horaFin}"></td>
+		                        <td th:text="${ch.vacantes}"></td>
+		                        <td th:text="${ch.estado}"></td>
+
+		                        <td>
+		                            <button class="btn btn-warning btn-sm btnEditarCursoHorario"
+		                                    th:data-id="${ch.idCursoHorario}">
+		                                <i class="bi bi-pencil-square"></i>
+		                            </button>
+
+		                            <button class="btn btn-danger btn-sm btnEliminarCursoHorario"
+		                                    th:data-id="${ch.idCursoHorario}">
+		                                <i class="bi bi-trash"></i>
+		                            </button>
+		                        </td>
+		                    </tr>
+		                </tbody>
+		            </table>
+
+		        </div>
+		    </div>
+
+		    <!-- Modal Curso Horario -->
+		    <div class="modal fade" id="modalCursoHorario" tabindex="-1">
+		        <div class="modal-dialog modal-lg">
+		            <div class="modal-content">
+
+		                <form id="frmCursoHorario"
+		                      th:action="@{/gestioncursohorario/registrar}"
+		                      th:object="${cursoHorario}"
+		                      method="post">
+
+		                    <input type="hidden"
+		                           id="idCursoHorario"
+		                           th:field="*{idCursoHorario}">
+
+		                    <div class="modal-header">
+		                        <h5 class="modal-title" id="tituloModalCursoHorario">
+		                            Registrar Curso Horario
+		                        </h5>
+
+		                        <button type="button"
+		                                class="btn-close"
+		                                data-bs-dismiss="modal">
+		                        </button>
+		                    </div>
+
+		                    <div class="modal-body">
+		                        <div class="row">
+
+		                            <div class="col-md-6 mb-3">
+		                                <label>Curso</label>
+		                                <select id="cursoCH"
+		                                        class="form-select"
+		                                        th:field="*{curso.idCurso}">
+		                                    <option value="0">Seleccione curso</option>
+		                                    <option th:each="c : ${cursos}"
+		                                            th:value="${c.idCurso}"
+		                                            th:text="${c.nombre}">
+		                                    </option>
+		                                </select>
+		                            </div>
+
+		                            <div class="col-md-6 mb-3">
+		                                <label>Horario</label>
+		                                <select id="horarioCH"
+		                                        class="form-select"
+		                                        th:field="*{horario.idHorario}">
+		                                    <option value="0">Seleccione horario</option>
+		                                    <option th:each="h : ${horarios}"
+		                                            th:value="${h.idHorario}"
+		                                            th:text="${h.descripcion + ' - ' + h.diaSemana + ' - ' + h.horaInicio + ' a ' + h.horaFin}">
+		                                    </option>
+		                                </select>
+		                            </div>
+
+		                            <div class="col-md-6 mb-3">
+		                                <label>Vacantes</label>
+		                                <input id="vacantesCH"
+		                                       type="number"
+		                                       class="form-control"
+		                                       th:field="*{vacantes}">
+		                            </div>
+
+		                            <div class="col-md-6 mb-3">
+		                                <label>Estado</label>
+		                                <select id="estadoCH"
+		                                        class="form-select"
+		                                        th:field="*{estado}">
+		                                    <option value="Disponible">Disponible</option>
+		                                    <option value="Inactivo">Inactivo</option>
+		                                    <option value="Sin Vacantes">Sin Vacantes</option>
+		                                </select>
+		                            </div>
+
+		                        </div>
+		                    </div>
+
+		                    <div class="modal-footer">
+		                        <button type="button"
+		                                class="btn btn-secondary"
+		                                data-bs-dismiss="modal">
+		                            Cerrar
+		                        </button>
+
+		                        <button type="submit" class="btn btn-primary">
+		                            Guardar
+		                        </button>
+		                    </div>
+
+		                </form>
+
+		            </div>
+		        </div>
+		    </div>
+			<!--Fin  Modal Curso Horario -->
+		</div>
 	</div>
 
 </div>
@@ -1116,6 +1280,44 @@
 	              window.location = "/gestionhorario/desactivar/" + id;
 	          }
 	      });
+		  
+		  // Script Curso Horario
+		  
+		  $(document).on("click", "#btnNuevoCursoHorario", function() {
+		         $("#tituloModalCursoHorario").text("Registrar Curso Horario");
+		         $("#frmCursoHorario").attr("action", "/gestioncursohorario/registrar");
+
+		         $("#idCursoHorario").val("");
+		         $("#cursoCH").val("0");
+		         $("#horarioCH").val("0");
+		         $("#vacantesCH").val("");
+		         $("#estadoCH").val("Disponible");
+		     });
+
+		     $(document).on("click", ".btnEditarCursoHorario", function() {
+		         let id = $(this).data("id");
+
+		         $("#tituloModalCursoHorario").text("Editar Curso Horario");
+		         $("#frmCursoHorario").attr("action", "/gestioncursohorario/actualizar");
+
+		         $.get("/gestioncursohorario/buscar/" + id, function(data) {
+		             $("#idCursoHorario").val(data.idCursoHorario);
+		             $("#cursoCH").val(data.curso.idCurso);
+		             $("#horarioCH").val(data.horario.idHorario);
+		             $("#vacantesCH").val(data.vacantes);
+		             $("#estadoCH").val(data.estado);
+
+		             $("#modalCursoHorario").modal("show");
+		         });
+		     });
+
+		     $(document).on("click", ".btnEliminarCursoHorario", function() {
+		         let id = $(this).data("id");
+
+		         if (confirm("¿Desea desactivar este curso horario?")) {
+		             window.location = "/gestioncursohorario/desactivar/" + id;
+		         }
+		     });
 	
 	
 	
@@ -1150,6 +1352,12 @@
 	               url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json'
 	           }
 	       });
+		   
+		   $('#tablaCursoHorarios').DataTable({
+		       language: {
+		           url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json'
+		       }
+		   });
 	   });
 </script>
 
