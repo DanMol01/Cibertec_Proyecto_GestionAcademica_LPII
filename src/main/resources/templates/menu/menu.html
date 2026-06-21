@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Menú Principal</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
+</head>
+
+<body class="bg-dark">
+
+<div class="d-flex">
+
+    <div class="bg-dark text-white p-3" style="width: 260px; min-height: 100vh;">
+
+        <h4 class="mb-4">Sistema Académico</h4>
+
+        <div class="d-grid gap-2">
+
+			<a th:href="@{/gestionestudiante/lista}" class="btn btn-light text-start">
+			    <i class="bi bi-person-lines-fill"></i>
+			    Gestionar Estudiantes
+			</a>
+
+			<a th:href="@{/gestionmatricula/lista}" class="btn btn-light text-start">
+			    <i class="bi bi-journal-check"></i>
+			    Gestionar Matrícula
+			</a>
+
+			<a th:href="@{/gestioncurso/lista}" class="btn btn-light text-start">
+			    <i class="bi bi-book"></i>
+			    Gestionar Cursos
+			</a>
+
+			<a th:href="@{/gestionhorario/lista}" class="btn btn-light text-start">
+			    <i class="bi bi-clock"></i>
+			    Gestionar Horarios
+			</a>
+
+			<a th:href="@{/gestionusuario/lista}" class="btn btn-light text-start">
+			    <i class="bi bi-people"></i>
+			    Gestionar Usuarios
+			</a>
+
+            <a th:href="@{/gestionlogin/logout}" class="btn btn-danger text-start mt-3">
+                <i class="bi bi-box-arrow-right"></i>
+                Cerrar Sesión
+            </a>
+
+        </div>
+    </div>
+
+	<div class="flex-grow-1 p-4">
+
+	    <div th:if="${vista == null}">
+	        <div class="card shadow">
+	            <div class="card-header bg-primary text-white">
+	                <h3 class="mb-0">Menú Principal</h3>
+	            </div>
+
+	            <div class="card-body">
+	                <h5>Bienvenido al Sistema Académico</h5>
+	                <p class="mb-0">
+	                    Seleccione una opción del menú lateral para continuar.
+	                </p>
+	            </div>
+	        </div>
+	    </div>
+
+	    <div th:if="${vista == 'usuarios'}">
+	        <div class="card shadow">
+	            <div class="card-header bg-primary text-white">
+	                <h3 class="mb-0">Gestión de Usuarios</h3>
+	            </div>
+
+	            <div class="card-body">
+
+	                <div class="mb-3">
+						<button id="btnNuevoUsuario"
+						        class="btn btn-success"
+						        data-bs-toggle="modal"
+						        data-bs-target="#modalUsuario">
+						    <i class="bi bi-plus-circle"></i>
+						    Nuevo usuario
+						</button>
+	                </div>
+
+	                <table id="tablaUsuarios" class="table table-bordered table-hover table-striped">
+	                    <thead class="table-dark">
+	                        <tr>
+	                            <th>ID</th>
+	                            <th>Usuario</th>
+								<th>Nombres</th>
+								<th>Apellidos</th>
+	                            <th>Rol</th>
+	                            <th>Estado</th>
+	                            <th>Acciones</th>
+	                        </tr>
+	                    </thead>
+
+	                    <tbody>
+	                        <tr th:each="u : ${usuarios}">
+	                            <td th:text="${u.idUsuario}"></td>
+	                            <td th:text="${u.usuario}"></td>
+								<td th:text="${u.nombres}"></td>
+								<td th:text="${u.apellidos}"></td>
+	                            <td th:text="${u.rol.nombre}"></td>
+	                            <td th:text="${u.estado}"></td>
+
+	                            <td>
+									<button class="btn btn-warning btn-sm btnEditarUsuario"
+									        th:data-id="${u.idUsuario}">
+									    <i class="bi bi-pencil-square"></i>
+									</button>
+
+									<button class="btn btn-danger btn-sm btnEliminarUsuario"
+									        th:data-id="${u.idUsuario}">
+									    <i class="bi bi-trash"></i>
+									</button>
+	                            </td>
+	                        </tr>
+	                    </tbody>
+	                </table>
+
+	            </div>
+	        </div>
+			<!--Ventana modal Usuario-->
+			<div class="modal fade" id="modalUsuario" tabindex="-1">
+			    <div class="modal-dialog modal-lg">
+			        <div class="modal-content">
+
+			            <form id="frmUsuario"
+			                  th:action="@{/gestionusuario/registrar}"
+			                  th:object="${usuarioObj}"
+			                  method="post">
+
+			                <input type="hidden" id="idUsuario" th:field="*{idUsuario}">
+
+			                <div class="modal-header">
+			                    <h5 class="modal-title" id="tituloModalUsuario">
+			                        Registrar Usuario
+			                    </h5>
+
+			                    <button type="button"
+			                            class="btn-close"
+			                            data-bs-dismiss="modal">
+			                    </button>
+			                </div>
+
+			                <div class="modal-body">
+			                    <div class="row">
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Rol</label>
+			                            <select id="rolUsuario"
+			                                    class="form-select"
+			                                    th:field="*{rol.idRol}">
+			                                <option value="0">Seleccione rol</option>
+			                                <option th:each="r : ${roles}"
+			                                        th:value="${r.idRol}"
+			                                        th:text="${r.nombre}">
+			                                </option>
+			                            </select>
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Usuario</label>
+			                            <input id="usuario"
+			                                   type="text"
+			                                   class="form-control"
+			                                   th:field="*{usuario}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Nombres</label>
+			                            <input id="nombresUsuario"
+			                                   type="text"
+			                                   class="form-control"
+			                                   th:field="*{nombres}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Apellidos</label>
+			                            <input id="apellidosUsuario"
+			                                   type="text"
+			                                   class="form-control"
+			                                   th:field="*{apellidos}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Clave</label>
+			                            <input id="clave"
+			                                   type="password"
+			                                   class="form-control"
+			                                   th:field="*{clave}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Estado</label>
+			                            <select id="estadoUsuario"
+			                                    class="form-select"
+			                                    th:field="*{estado}">
+			                                <option value="Activo">Activo</option>
+			                                <option value="Inactivo">Inactivo</option>
+			                            </select>
+			                        </div>
+
+			                    </div>
+			                </div>
+
+			                <div class="modal-footer">
+			                    <button type="button"
+			                            class="btn btn-secondary"
+			                            data-bs-dismiss="modal">
+			                        Cerrar
+			                    </button>
+
+			                    <button type="submit" class="btn btn-primary">
+			                        Guardar
+			                    </button>
+			                </div>
+
+			            </form>
+
+			        </div>
+			    </div>
+			</div>
+			<!-- fin Ventana modal Usuario-->
+			
+	    </div>
+		
+		<div th:if="${vista == 'estudiantes'}">
+		    <div class="card shadow">
+		        <div class="card-header bg-primary text-white">
+		            <h3 class="mb-0">Gestión de Estudiantes</h3>
+		        </div>
+
+		        <div class="card-body">
+
+		            <div class="mb-3">
+						<button id="btnNuevoEstudiante"
+						        class="btn btn-success"
+						        data-bs-toggle="modal"
+						        data-bs-target="#modalEstudiante">
+						    <i class="bi bi-plus-circle"></i>
+						    Nuevo estudiante
+						</button>
+		            </div>
+
+		            <table id="tablaEstudiantes" class="table table-bordered table-hover table-striped">
+		                <thead class="table-dark">
+		                    <tr>
+		                        <th>ID</th>
+								<th>Tipo Documento</th>
+		                        <th>Numero Documento</th>
+		                        <th>Nombres</th>
+		                        <th>Apellidos</th>
+		                        <th>Teléfono</th>
+		                        <th>Correo</th>
+		                        <th>Estado</th>
+		                        <th>Acciones</th>
+		                    </tr>
+		                </thead>
+
+		                <tbody>
+		                    <tr th:each="e : ${estudiantes}">
+		                        <td th:text="${e.idEstudiante}"></td>
+								<td th:text="${e.tipoDocumento.nombre}"></td>
+		                        <td th:text="${e.nroDocumento}"></td>
+		                        <td th:text="${e.nombres}"></td>
+		                        <td th:text="${e.apellidos}"></td>
+		                        <td th:text="${e.telefono}"></td>
+		                        <td th:text="${e.correo}"></td>
+		                        <td th:text="${e.estado}"></td>
+
+		                        <td>
+									<button class="btn btn-warning btn-sm btnEditarEstudiante"
+									        th:data-id="${e.idEstudiante}">
+									    <i class="bi bi-pencil-square"></i>
+									</button>
+
+									<button class="btn btn-danger btn-sm btnEliminarEstudiante"
+									        th:data-id="${e.idEstudiante}">
+									    <i class="bi bi-trash"></i>
+									</button>
+		                        </td>
+		                    </tr>
+		                </tbody>
+		            </table>
+
+		        </div>
+		    </div>
+			<!--Ventana modal estudiante-->
+
+			<div class="modal fade" id="modalEstudiante" tabindex="-1">
+			    <div class="modal-dialog modal-lg">
+			        <div class="modal-content">
+
+			            <form id="frmEstudiante"
+			                  th:action="@{/gestionestudiante/registrar}"
+			                  th:object="${estudiante}"
+			                  method="post">
+
+			                <input type="hidden" id="idEstudiante" th:field="*{idEstudiante}">
+
+			                <div class="modal-header">
+			                    <h5 class="modal-title" id="tituloModalEstudiante">
+			                        Registrar Estudiante
+			                    </h5>
+
+			                    <button type="button"
+			                            class="btn-close"
+			                            data-bs-dismiss="modal">
+			                    </button>
+			                </div>
+
+			                <div class="modal-body">
+			                    <div class="row">
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Tipo documento</label>
+			                            <select id="tipoDocumento"
+			                                    class="form-select"
+			                                    th:field="*{tipoDocumento.idTipoDocumento}">
+			                                <option value="0">Seleccione</option>
+			                                <option th:each="td : ${tiposDocumento}"
+			                                        th:value="${td.idTipoDocumento}"
+			                                        th:text="${td.nombre}">
+			                                </option>
+			                            </select>
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Nro documento</label>
+			                            <input id="nroDocumento"
+			                                   type="text"
+			                                   class="form-control"
+			                                   th:field="*{nroDocumento}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Nombres</label>
+			                            <input id="nombres"
+			                                   type="text"
+			                                   class="form-control"
+			                                   th:field="*{nombres}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Apellidos</label>
+			                            <input id="apellidos"
+			                                   type="text"
+			                                   class="form-control"
+			                                   th:field="*{apellidos}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Teléfono</label>
+			                            <input id="telefono"
+			                                   type="text"
+			                                   class="form-control"
+			                                   th:field="*{telefono}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Correo</label>
+			                            <input id="correo"
+			                                   type="email"
+			                                   class="form-control"
+			                                   th:field="*{correo}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Dirección</label>
+			                            <input id="direccion"
+			                                   type="text"
+			                                   class="form-control"
+			                                   th:field="*{direccion}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Estado</label>
+			                            <select id="estado"
+			                                    class="form-select"
+			                                    th:field="*{estado}">
+			                                <option value="Registrado">Registrado</option>
+			                                <option value="Activo">Activo</option>
+			                                <option value="Inactivo">Inactivo</option>
+			                                <option value="Retirado">Retirado</option>
+			                            </select>
+			                        </div>
+
+			                    </div>
+			                </div>
+
+			                <div class="modal-footer">
+			                    <button type="button"
+			                            class="btn btn-secondary"
+			                            data-bs-dismiss="modal">
+			                        Cerrar
+			                    </button>
+
+			                    <button type="submit" class="btn btn-primary">
+			                        Guardar
+			                    </button>
+			                </div>
+
+			            </form>
+
+			        </div>
+			    </div>
+			</div>
+			
+			<!-- FIN modal estudiante-->
+		</div>
+		
+		----
+		<div th:if="${vista == 'matriculas'}">
+		    <div class="card shadow">
+		        <div class="card-header bg-primary text-white">
+		            <h3 class="mb-0">Gestión de Matrículas</h3>
+		        </div>
+
+		        <div class="card-body">
+
+		            <div class="mb-3">
+						<button id="btnNuevaMatricula"
+						        class="btn btn-success"
+						        data-bs-toggle="modal"
+						        data-bs-target="#modalMatricula">
+						    <i class="bi bi-plus-circle"></i>
+						    Nueva matrícula
+						</button>
+		            </div>
+
+		            <table id="tablaMatriculas" class="table table-bordered table-hover table-striped">
+		                <thead class="table-dark">
+		                    <tr>
+		                        <th>ID</th>
+		                        <th>Estudiante</th>
+		                        <th>Curso</th>
+		                        <th>Horario</th>
+		                        <th>Fecha matrícula</th>
+		                        <th>Monto</th>
+		                        <th>Estado</th>
+		                        <th>Acciones</th>
+		                    </tr>
+		                </thead>
+
+		                <tbody>
+		                    <tr th:each="m : ${matriculas}">
+		                        <td th:text="${m.idMatricula}"></td>
+
+		                        <td th:text="${m.estudiante.nombres + ' ' + m.estudiante.apellidos}"></td>
+
+		                        <td th:text="${m.cursoHorario.curso.nombre}"></td>
+
+		                        <td th:text="${m.cursoHorario.horario.descripcion}"></td>
+
+		                        <td th:text="${m.fechaMatricula}"></td>
+
+		                        <td th:text="${m.monto}"></td>
+
+		                        <td th:text="${m.estado}"></td>
+
+		                        <td>
+									<button class="btn btn-warning btn-sm btnEditarMatricula"
+									        th:data-id="${m.idMatricula}">
+									    <i class="bi bi-pencil-square"></i>
+									</button>
+
+									<button class="btn btn-danger btn-sm btnEliminarMatricula"
+									        th:data-id="${m.idMatricula}">
+									    <i class="bi bi-trash"></i>
+									</button>
+		                        </td>
+		                    </tr>
+		                </tbody>
+		            </table>
+
+		        </div>
+		    </div>
+			<!--Ventana modal matricula-->
+			
+			<div class="modal fade" id="modalMatricula" tabindex="-1">
+			    <div class="modal-dialog modal-lg">
+			        <div class="modal-content">
+
+			            <form id="frmMatricula"
+			                  th:action="@{/gestionmatricula/registrar}"
+			                  th:object="${matricula}"
+			                  method="post">
+
+			                <input type="hidden" id="idMatricula" th:field="*{idMatricula}">
+
+			                <div class="modal-header">
+			                    <h5 class="modal-title" id="tituloModalMatricula">
+			                        Nueva Matrícula
+			                    </h5>
+
+			                    <button type="button"
+			                            class="btn-close"
+			                            data-bs-dismiss="modal">
+			                    </button>
+			                </div>
+
+			                <div class="modal-body">
+			                    <div class="row">
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Estudiante</label>
+			                            <select id="estudiante"
+			                                    class="form-select"
+			                                    th:field="*{estudiante.idEstudiante}">
+			                                <option value="0">Seleccione estudiante</option>
+			                                <option th:each="e : ${estudiantes}"
+			                                        th:value="${e.idEstudiante}"
+			                                        th:text="${e.nroDocumento + ' - ' + e.nombres + ' ' + e.apellidos}">
+			                                </option>
+			                            </select>
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Curso y horario</label>
+			                            <select id="cursoHorario"
+			                                    class="form-select"
+			                                    th:field="*{cursoHorario.idCursoHorario}">
+			                                <option value="0">Seleccione curso y horario</option>
+			                                <option th:each="ch : ${cursoHorarios}"
+			                                        th:value="${ch.idCursoHorario}"
+			                                        th:text="${ch.curso.nombre + ' - ' + ch.horario.descripcion + ' - Vacantes: ' + ch.vacantes}">
+			                                </option>
+			                            </select>
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Fecha matrícula</label>
+			                            <input id="fechaMatricula"
+			                                   type="datetime-local"
+			                                   class="form-control"
+			                                   th:field="*{fechaMatricula}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Monto</label>
+			                            <input id="monto"
+			                                   type="number"
+			                                   step="0.01"
+			                                   class="form-control"
+			                                   th:field="*{monto}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Estado</label>
+			                            <select id="estadoMatricula"
+			                                    class="form-select"
+			                                    th:field="*{estado}">
+			                                <option value="Pendiente de Pago">Pendiente de Pago</option>
+			                                <option value="Pagada">Pagada</option>
+			                                <option value="Anulada">Anulada</option>
+			                            </select>
+			                        </div>
+
+			                    </div>
+			                </div>
+
+			                <div class="modal-footer">
+			                    <button type="button"
+			                            class="btn btn-secondary"
+			                            data-bs-dismiss="modal">
+			                        Cerrar
+			                    </button>
+
+			                    <button type="submit" class="btn btn-primary">
+			                        Guardar
+			                    </button>
+			                </div>
+
+			            </form>
+
+			        </div>
+			    </div>
+			</div>
+			
+			<!-- FIN modal Matricula-->
+		</div>
+		
+		<div th:if="${vista == 'cursos'}">
+		    <div class="card shadow">
+		        <div class="card-header bg-primary text-white">
+		            <h3 class="mb-0">Gestión de Cursos</h3>
+		        </div>
+
+		        <div class="card-body">
+
+		            <div class="mb-3">
+						<button id="btnNuevoCurso"
+						        class="btn btn-success"
+						        data-bs-toggle="modal"
+						        data-bs-target="#modalCurso">
+						    <i class="bi bi-plus-circle"></i>
+						    Nuevo curso
+						</button>
+		            </div>
+
+		            <table id="tablaCursos" class="table table-bordered table-hover table-striped">
+		                <thead class="table-dark">
+		                    <tr>
+		                        <th>ID</th>
+		                        <th>Categoría</th>
+		                        <th>Nombre</th>
+		                        <th>Descripción</th>
+		                        <th>Costo</th>
+		                        <th>Estado</th>
+		                        <th>Acciones</th>
+		                    </tr>
+		                </thead>
+
+		                <tbody>
+		                    <tr th:each="c : ${cursos}">
+		                        <td th:text="${c.idCurso}"></td>
+		                        <td th:text="${c.categoria.nombre}"></td>
+		                        <td th:text="${c.nombre}"></td>
+		                        <td th:text="${c.descripcion}"></td>
+		                        <td th:text="${c.costo}"></td>
+		                        <td th:text="${c.estado}"></td>
+
+		                        <td>
+									<button class="btn btn-warning btn-sm btnEditarCurso"
+									        th:data-id="${c.idCurso}">
+									    <i class="bi bi-pencil-square"></i>
+									</button>
+
+									<button class="btn btn-danger btn-sm btnEliminarCurso"
+									        th:data-id="${c.idCurso}">
+									    <i class="bi bi-trash"></i>
+									</button>
+		                        </td>
+		                    </tr>
+		                </tbody>
+		            </table>
+
+		        </div>
+		    </div>
+			<!-- Modal Curso-->
+			<div class="modal fade" id="modalCurso" tabindex="-1">
+			    <div class="modal-dialog modal-lg">
+			        <div class="modal-content">
+
+			            <form id="frmCurso"
+			                  th:action="@{/gestioncurso/registrar}"
+			                  th:object="${curso}"
+			                  method="post">
+
+			                <input type="hidden" id="idCurso" th:field="*{idCurso}">
+
+			                <div class="modal-header">
+			                    <h5 class="modal-title" id="tituloModalCurso">
+			                        Registrar Curso
+			                    </h5>
+
+			                    <button type="button"
+			                            class="btn-close"
+			                            data-bs-dismiss="modal">
+			                    </button>
+			                </div>
+
+			                <div class="modal-body">
+			                    <div class="row">
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Categoría</label>
+			                            <select id="categoria"
+			                                    class="form-select"
+			                                    th:field="*{categoria.idCategoria}">
+			                                <option value="0">Seleccione categoría</option>
+			                                <option th:each="cat : ${categorias}"
+			                                        th:value="${cat.idCategoria}"
+			                                        th:text="${cat.nombre}">
+			                                </option>
+			                            </select>
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Nombre</label>
+			                            <input id="nombreCurso"
+			                                   type="text"
+			                                   class="form-control"
+			                                   th:field="*{nombre}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Costo</label>
+			                            <input id="costo"
+			                                   type="number"
+			                                   step="0.01"
+			                                   class="form-control"
+			                                   th:field="*{costo}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Estado</label>
+			                            <select id="estadoCurso"
+			                                    class="form-select"
+			                                    th:field="*{estado}">
+			                                <option value="Activo">Activo</option>
+			                                <option value="Inactivo">Inactivo</option>
+			                            </select>
+			                        </div>
+
+			                        <div class="col-md-12 mb-3">
+			                            <label>Descripción</label>
+			                            <textarea id="descripcion"
+			                                      class="form-control"
+			                                      th:field="*{descripcion}">
+			                            </textarea>
+			                        </div>
+
+			                    </div>
+			                </div>
+
+			                <div class="modal-footer">
+			                    <button type="button"
+			                            class="btn btn-secondary"
+			                            data-bs-dismiss="modal">
+			                        Cerrar
+			                    </button>
+
+			                    <button type="submit" class="btn btn-primary">
+			                        Guardar
+			                    </button>
+			                </div>
+
+			            </form>
+
+			        </div>
+			    </div>
+			</div>
+			
+			
+			<!-- FIN modal Curso-->
+		</div>
+		<div th:if="${vista == 'horarios'}">
+		    <div class="card shadow">
+		        <div class="card-header bg-primary text-white">
+		            <h3 class="mb-0">Gestión de Horarios</h3>
+		        </div>
+
+		        <div class="card-body">
+
+		            <div class="mb-3">
+						<button id="btnNuevoHorario"
+						        class="btn btn-success"
+						        data-bs-toggle="modal"
+						        data-bs-target="#modalHorario">
+						    <i class="bi bi-plus-circle"></i>
+						    Nuevo horario
+						</button>
+		            </div>
+
+		            <table id="tablaHorarios" class="table table-bordered table-hover table-striped">
+		                <thead class="table-dark">
+		                    <tr>
+		                        <th>ID</th>
+		                        <th>Descripción</th>
+		                        <th>Día</th>
+		                        <th>Hora inicio</th>
+		                        <th>Hora fin</th>
+		                        <th>Estado</th>
+		                        <th>Acciones</th>
+		                    </tr>
+		                </thead>
+
+		                <tbody>
+		                    <tr th:each="h : ${horarios}">
+		                        <td th:text="${h.idHorario}"></td>
+		                        <td th:text="${h.descripcion}"></td>
+		                        <td th:text="${h.diaSemana}"></td>
+		                        <td th:text="${h.horaInicio}"></td>
+		                        <td th:text="${h.horaFin}"></td>
+		                        <td th:text="${h.estado}"></td>
+
+		                        <td>
+									<button class="btn btn-warning btn-sm btnEditarHorario"
+									        th:data-id="${h.idHorario}">
+									    <i class="bi bi-pencil-square"></i>
+									</button>
+
+									<button class="btn btn-danger btn-sm btnEliminarHorario"
+									        th:data-id="${h.idHorario}">
+									    <i class="bi bi-trash"></i>
+									</button>
+		                        </td>
+		                    </tr>
+		                </tbody>
+		            </table>
+
+		        </div>
+		    </div>
+			<!-- modal Horario-->
+			<div class="modal fade" id="modalHorario" tabindex="-1">
+			    <div class="modal-dialog modal-lg">
+			        <div class="modal-content">
+
+			            <form id="frmHorario"
+			                  th:action="@{/gestionhorario/registrar}"
+			                  th:object="${horario}"
+			                  method="post">
+
+			                <input type="hidden" id="idHorario" th:field="*{idHorario}">
+
+			                <div class="modal-header">
+			                    <h5 class="modal-title" id="tituloModalHorario">
+			                        Registrar Horario
+			                    </h5>
+
+			                    <button type="button"
+			                            class="btn-close"
+			                            data-bs-dismiss="modal">
+			                    </button>
+			                </div>
+
+			                <div class="modal-body">
+			                    <div class="row">
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Descripción</label>
+			                            <input id="descripcionHorario"
+			                                   type="text"
+			                                   class="form-control"
+			                                   th:field="*{descripcion}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Día semana</label>
+			                            <input id="diaSemana"
+			                                   type="text"
+			                                   class="form-control"
+			                                   th:field="*{diaSemana}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Hora inicio</label>
+			                            <input id="horaInicio"
+			                                   type="time"
+			                                   class="form-control"
+			                                   th:field="*{horaInicio}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Hora fin</label>
+			                            <input id="horaFin"
+			                                   type="time"
+			                                   class="form-control"
+			                                   th:field="*{horaFin}">
+			                        </div>
+
+			                        <div class="col-md-6 mb-3">
+			                            <label>Estado</label>
+			                            <select id="estadoHorario"
+			                                    class="form-select"
+			                                    th:field="*{estado}">
+			                                <option value="Activo">Activo</option>
+			                                <option value="Inactivo">Inactivo</option>
+			                            </select>
+			                        </div>
+
+			                    </div>
+			                </div>
+
+			                <div class="modal-footer">
+			                    <button type="button"
+			                            class="btn btn-secondary"
+			                            data-bs-dismiss="modal">
+			                        Cerrar
+			                    </button>
+
+			                    <button type="submit" class="btn btn-primary">
+			                        Guardar
+			                    </button>
+			                </div>
+
+			            </form>
+
+			        </div>
+			    </div>
+			</div>
+			<!-- Fin modal Horario-->
+		</div>
+		
+	</div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+
+
+<script>
+	
+
+	// script modal usuario
+	$(document).on("click", "#btnNuevoUsuario", function() {
+	        $("#tituloModalUsuario").text("Registrar Usuario");
+	        $("#frmUsuario").attr("action", "/gestionusuario/registrar");
+
+	        $("#idUsuario").val("");
+	        $("#rolUsuario").val("0");
+	        $("#usuario").val("");
+	        $("#nombresUsuario").val("");
+	        $("#apellidosUsuario").val("");
+	        $("#clave").val("");
+	        $("#estadoUsuario").val("Activo");
+	    });
+
+	    $(document).on("click", ".btnEditarUsuario", function() {
+	        let id = $(this).data("id");
+
+	        $("#tituloModalUsuario").text("Editar Usuario");
+	        $("#frmUsuario").attr("action", "/gestionusuario/actualizar");
+
+	        $.get("/gestionusuario/buscar/" + id, function(data) {
+	            $("#idUsuario").val(data.idUsuario);
+	            $("#rolUsuario").val(data.rol.idRol);
+	            $("#usuario").val(data.usuario);
+	            $("#nombresUsuario").val(data.nombres);
+	            $("#apellidosUsuario").val(data.apellidos);
+	            $("#clave").val(data.clave);
+	            $("#estadoUsuario").val(data.estado);
+
+	            $("#modalUsuario").modal("show");
+	        });
+	    });
+
+	    $(document).on("click", ".btnEliminarUsuario", function() {
+	        let id = $(this).data("id");
+
+	        if (confirm("¿Desea desactivar este usuario?")) {
+	            window.location = "/gestionusuario/desactivar/" + id;
+	        }
+	    });
+	
+	// script modal estudiante 
+    $(document).on("click", "#btnNuevoEstudiante", function() {
+        $("#tituloModalEstudiante").text("Registrar Estudiante");
+        $("#frmEstudiante").attr("action", "/gestionestudiante/registrar");
+
+        $("#idEstudiante").val("");
+        $("#tipoDocumento").val("0");
+        $("#nroDocumento").val("");
+        $("#nombres").val("");
+        $("#apellidos").val("");
+        $("#telefono").val("");
+        $("#correo").val("");
+        $("#direccion").val("");
+        $("#estado").val("Registrado");
+    });
+
+    $(document).on("click", ".btnEditarEstudiante", function() {
+        let id = $(this).data("id");
+
+        $("#tituloModalEstudiante").text("Editar Estudiante");
+        $("#frmEstudiante").attr("action", "/gestionestudiante/actualizar");
+
+        $.get("/gestionestudiante/buscar/" + id, function(data) {
+            $("#idEstudiante").val(data.idEstudiante);
+            $("#tipoDocumento").val(data.tipoDocumento.idTipoDocumento);
+            $("#nroDocumento").val(data.nroDocumento);
+            $("#nombres").val(data.nombres);
+            $("#apellidos").val(data.apellidos);
+            $("#telefono").val(data.telefono);
+            $("#correo").val(data.correo);
+            $("#direccion").val(data.direccion);
+            $("#estado").val(data.estado);
+
+            $("#modalEstudiante").modal("show");
+        });
+    });
+	
+    $(document).on("click", ".btnEliminarEstudiante", function() {
+        let id = $(this).data("id");
+
+        if (confirm("¿Desea desactivar este estudiante?")) {
+            window.location = "/gestionestudiante/desactivar/" + id;
+        }
+    });
+	// script modal maticula
+	
+	$(document).on("click", "#btnNuevaMatricula", function() {
+	        $("#tituloModalMatricula").text("Nueva Matrícula");
+	        $("#frmMatricula").attr("action", "/gestionmatricula/registrar");
+
+	        $("#idMatricula").val("");
+	        $("#estudiante").val("0");
+	        $("#cursoHorario").val("0");
+	        $("#fechaMatricula").val("");
+	        $("#monto").val("");
+	        $("#estadoMatricula").val("Pendiente de Pago");
+	    });
+
+	    $(document).on("click", ".btnEditarMatricula", function() {
+	        let id = $(this).data("id");
+
+	        $("#tituloModalMatricula").text("Editar Matrícula");
+	        $("#frmMatricula").attr("action", "/gestionmatricula/actualizar");
+
+	        $.get("/gestionmatricula/buscar/" + id, function(data) {
+	            $("#idMatricula").val(data.idMatricula);
+	            $("#estudiante").val(data.estudiante.idEstudiante);
+	            $("#cursoHorario").val(data.cursoHorario.idCursoHorario);
+				if (data.fechaMatricula != null) {
+				    $("#fechaMatricula").val(data.fechaMatricula.substring(0, 16));
+				}
+	            $("#monto").val(data.monto);
+	            $("#estadoMatricula").val(data.estado);
+
+	            $("#modalMatricula").modal("show");
+	        });
+	    });
+
+	    $(document).on("click", ".btnEliminarMatricula", function() {
+	        let id = $(this).data("id");
+
+	        if (confirm("¿Desea anular esta matrícula?")) {
+	            window.location = "/gestionmatricula/desactivar/" + id;
+	        }
+	    });
+		
+		//
+
+	
+	
+	// Script curso
+	
+	$(document).on("click", "#btnNuevoCurso", function() {
+	       $("#tituloModalCurso").text("Registrar Curso");
+	       $("#frmCurso").attr("action", "/gestioncurso/registrar");
+
+	       $("#idCurso").val("");
+	       $("#categoria").val("0");
+	       $("#nombreCurso").val("");
+	       $("#descripcion").val("");
+	       $("#costo").val("");
+	       $("#estadoCurso").val("Activo");
+	   });
+
+	   $(document).on("click", ".btnEditarCurso", function() {
+	       let id = $(this).data("id");
+
+	       $("#tituloModalCurso").text("Editar Curso");
+	       $("#frmCurso").attr("action", "/gestioncurso/actualizar");
+
+	       $.get("/gestioncurso/buscar/" + id, function(data) {
+	           $("#idCurso").val(data.idCurso);
+	           $("#categoria").val(data.categoria.idCategoria);
+	           $("#nombreCurso").val(data.nombre);
+	           $("#descripcion").val(data.descripcion);
+	           $("#costo").val(data.costo);
+	           $("#estadoCurso").val(data.estado);
+
+	           $("#modalCurso").modal("show");
+	       });
+	   });
+
+	   $(document).on("click", ".btnEliminarCurso", function() {
+	       let id = $(this).data("id");
+
+	       if (confirm("¿Desea desactivar este curso?")) {
+	           window.location = "/gestioncurso/desactivar/" + id;
+	       }
+	   });
+	   
+	   // script horarios
+	   
+	   $(document).on("click", "#btnNuevoHorario", function() {
+	          $("#tituloModalHorario").text("Registrar Horario");
+	          $("#frmHorario").attr("action", "/gestionhorario/registrar");
+
+	          $("#idHorario").val("");
+	          $("#descripcionHorario").val("");
+	          $("#diaSemana").val("");
+	          $("#horaInicio").val("");
+	          $("#horaFin").val("");
+	          $("#estadoHorario").val("Activo");
+	      });
+
+	      $(document).on("click", ".btnEditarHorario", function() {
+	          let id = $(this).data("id");
+
+	          $("#tituloModalHorario").text("Editar Horario");
+	          $("#frmHorario").attr("action", "/gestionhorario/actualizar");
+
+	          $.get("/gestionhorario/buscar/" + id, function(data) {
+	              $("#idHorario").val(data.idHorario);
+	              $("#descripcionHorario").val(data.descripcion);
+	              $("#diaSemana").val(data.diaSemana);
+	              $("#horaInicio").val(data.horaInicio);
+	              $("#horaFin").val(data.horaFin);
+	              $("#estadoHorario").val(data.estado);
+
+	              $("#modalHorario").modal("show");
+	          });
+	      });
+
+	      $(document).on("click", ".btnEliminarHorario", function() {
+	          let id = $(this).data("id");
+
+	          if (confirm("¿Desea desactivar este horario?")) {
+	              window.location = "/gestionhorario/desactivar/" + id;
+	          }
+	      });
+	
+	
+	
+	
+	$(document).ready(function() {
+	       $('#tablaUsuarios').DataTable({
+	           language: {
+	               url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json'
+	           }
+	       });
+
+	       $('#tablaEstudiantes').DataTable({
+	           language: {
+	               url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json'
+	           }
+	       });
+
+	       $('#tablaCursos').DataTable({
+	           language: {
+	               url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json'
+	           }
+	       });
+
+	       $('#tablaHorarios').DataTable({
+	           language: {
+	               url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json'
+	           }
+	       });
+
+	       $('#tablaMatriculas').DataTable({
+	           language: {
+	               url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json'
+	           }
+	       });
+	   });
+</script>
+
+
+
+
+
+</body>
+</html>
