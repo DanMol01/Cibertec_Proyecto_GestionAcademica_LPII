@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.academia.entity.Horario;
 import com.academia.service.HorarioService;
 
@@ -23,14 +25,16 @@ public class HorarioController {
     }
 
     @PostMapping("/registrar")
-    public String registrar(Horario horario) {
+    public String registrar(Horario horario, RedirectAttributes redirect) {
         horarioService.registrar(horario);
+        redirect.addFlashAttribute("msg","Horario registrado correctamente");
         return "redirect:/gestionhorario/lista";
     }
 
     @PostMapping("/actualizar")
-    public String actualizar(Horario horario) {
+    public String actualizar(Horario horario, RedirectAttributes redirect) {
         horarioService.actualizar(horario);
+        redirect.addFlashAttribute("msg","Horario actualizado correctamente");
         return "redirect:/gestionhorario/lista";
     }
 
@@ -41,8 +45,9 @@ public class HorarioController {
     }
 
     @GetMapping("/desactivar/{id}")
-    public String desactivar(@PathVariable int id) {
+    public String desactivar(@PathVariable int id, RedirectAttributes redirect) {
         horarioService.desactivar(id);
+        redirect.addFlashAttribute("msg","Horario desactivado correctamente");
         return "redirect:/gestionhorario/lista";
     }
 }

@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.academia.entity.UsuarioSistema;
 import com.academia.service.RolService;
 import com.academia.service.UsuarioService;
@@ -28,14 +30,23 @@ public class UsuarioController {
     }
 
     @PostMapping("/registrar")
-    public String registrar(UsuarioSistema usuarioObj) {
+    public String registrar(UsuarioSistema usuarioObj, RedirectAttributes redirect) {
         usuarioService.registrar(usuarioObj);
+        redirect.addFlashAttribute("msg", "Usuario registrado correctamente");
         return "redirect:/gestionusuario/lista";
     }
 
     @PostMapping("/actualizar")
-    public String actualizar(UsuarioSistema usuarioObj) {
+    public String actualizar(UsuarioSistema usuarioObj, RedirectAttributes redirect) {
         usuarioService.actualizar(usuarioObj);
+        redirect.addFlashAttribute("msg", "Usuario actualizado correctamente");
+        return "redirect:/gestionusuario/lista";
+    }
+
+    @GetMapping("/desactivar/{id}")
+    public String desactivar(@PathVariable int id, RedirectAttributes redirect) {
+        usuarioService.desactivar(id);
+        redirect.addFlashAttribute("msg", "Usuario desactivado correctamente");
         return "redirect:/gestionusuario/lista";
     }
 
@@ -43,11 +54,5 @@ public class UsuarioController {
     @ResponseBody
     public UsuarioSistema buscar(@PathVariable int id) {
         return usuarioService.buscarPorId(id);
-    }
-
-    @GetMapping("/desactivar/{id}")
-    public String desactivar(@PathVariable int id) {
-        usuarioService.desactivar(id);
-        return "redirect:/gestionusuario/lista";
     }
 }

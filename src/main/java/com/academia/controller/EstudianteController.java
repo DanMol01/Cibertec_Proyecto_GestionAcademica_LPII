@@ -30,8 +30,7 @@ public class EstudianteController {
     }
 
     @PostMapping("/registrar")
-    public String registrar(Estudiante estudiante,
-                            RedirectAttributes redirect) {
+    public String registrar(Estudiante estudiante,RedirectAttributes redirect) {
 
         estudianteService.registrar(estudiante);
         redirect.addFlashAttribute("msg", "Estudiante registrado correctamente");

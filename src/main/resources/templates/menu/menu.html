@@ -78,11 +78,11 @@
 
 	    <div th:if="${vista == 'usuarios'}">
 	        <div class="card shadow">
-	            <div class="card-header bg-primary text-white">
+	            <div class="card-header bg-dark text-white">
 	                <h3 class="mb-0">Gestión de Usuarios</h3>
 	            </div>
 
-	            <div class="card-body">
+	            <div class="card-body ">
 
 	                <div class="mb-3">
 						<button id="btnNuevoUsuario"
@@ -93,6 +93,16 @@
 						    Nuevo usuario
 						</button>
 	                </div>
+					
+					<div id="msgusuario"
+							th:if="${msg}"
+						class="alert alert-success alert-dismissible fade show">
+								    <span th:text="${msg}"></span>
+								    <button type="button"
+								            class="btn-close"
+								            data-bs-dismiss="alert">
+								    </button>
+					</div>
 
 	                <table id="tablaUsuarios" class="table table-bordered table-hover table-striped">
 	                    <thead class="table-dark">
@@ -114,7 +124,16 @@
 								<td th:text="${u.nombres}"></td>
 								<td th:text="${u.apellidos}"></td>
 	                            <td th:text="${u.rol.nombre}"></td>
-	                            <td th:text="${u.estado}"></td>
+	                            <td>
+									
+									<span class="badge" th:classappend="${u.estado=='Activo'} ?
+													' bg-success':
+												     ' bg-danger'"
+									 th:text="${u.estado}">
+									</span>
+
+									
+								</td>
 
 	                            <td>
 									<button class="btn btn-warning btn-sm btnEditarUsuario"
@@ -163,8 +182,8 @@
 			                            <label>Rol</label>
 			                            <select id="rolUsuario"
 			                                    class="form-select"
-			                                    th:field="*{rol.idRol}">
-			                                <option value="0">Seleccione rol</option>
+			                                    th:field="*{rol.idRol}" required>
+			                                <option value="">Seleccione rol</option>
 			                                <option th:each="r : ${roles}"
 			                                        th:value="${r.idRol}"
 			                                        th:text="${r.nombre}">
@@ -177,7 +196,7 @@
 			                            <input id="usuario"
 			                                   type="text"
 			                                   class="form-control"
-			                                   th:field="*{usuario}">
+			                                   th:field="*{usuario}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
@@ -185,7 +204,7 @@
 			                            <input id="nombresUsuario"
 			                                   type="text"
 			                                   class="form-control"
-			                                   th:field="*{nombres}">
+			                                   th:field="*{nombres}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
@@ -193,7 +212,7 @@
 			                            <input id="apellidosUsuario"
 			                                   type="text"
 			                                   class="form-control"
-			                                   th:field="*{apellidos}">
+			                                   th:field="*{apellidos}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
@@ -201,14 +220,14 @@
 			                            <input id="clave"
 			                                   type="password"
 			                                   class="form-control"
-			                                   th:field="*{clave}">
+			                                   th:field="*{clave}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
 			                            <label>Estado</label>
 			                            <select id="estadoUsuario"
 			                                    class="form-select"
-			                                    th:field="*{estado}">
+			                                    th:field="*{estado}" required>
 			                                <option value="Activo">Activo</option>
 			                                <option value="Inactivo">Inactivo</option>
 			                            </select>
@@ -255,6 +274,17 @@
 						    Nuevo estudiante
 						</button>
 		            </div>
+					
+					<div id="msgestudiante"
+							th:if="${msg}"
+						class="alert alert-success alert-dismissible fade show">
+								    <span th:text="${msg}"></span>
+								    <button type="button"
+								            class="btn-close"
+								            data-bs-dismiss="alert">
+								    </button>
+					</div>
+
 
 		            <table id="tablaEstudiantes" class="table table-bordered table-hover table-striped">
 		                <thead class="table-dark">
@@ -280,7 +310,19 @@
 		                        <td th:text="${e.apellidos}"></td>
 		                        <td th:text="${e.telefono}"></td>
 		                        <td th:text="${e.correo}"></td>
-		                        <td th:text="${e.estado}"></td>
+		                        <td >
+									
+									
+									    <span class="badge"
+									          th:classappend="${e.estado == 'Activo'} ?
+									                          ' bg-success' :
+									                          (${e.estado == 'Registrado'} ? ' bg-primary' :
+									                          (${e.estado == 'Retirado'} ? ' bg-warning text-dark' :
+									                          (${e.estado == 'Inactivo'} ? ' bg-danger' : ' bg-secondary')))"
+									          th:text="${e.estado}">
+									    </span>
+									
+								</td>
 
 		                        <td>
 									<button class="btn btn-warning btn-sm btnEditarEstudiante"
@@ -330,7 +372,7 @@
 			                            <label>Tipo documento</label>
 			                            <select id="tipoDocumento"
 			                                    class="form-select"
-			                                    th:field="*{tipoDocumento.idTipoDocumento}">
+			                                    th:field="*{tipoDocumento.idTipoDocumento}" required>
 			                                <option value="0">Seleccione</option>
 			                                <option th:each="td : ${tiposDocumento}"
 			                                        th:value="${td.idTipoDocumento}"
@@ -344,7 +386,7 @@
 			                            <input id="nroDocumento"
 			                                   type="text"
 			                                   class="form-control"
-			                                   th:field="*{nroDocumento}">
+			                                   th:field="*{nroDocumento}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
@@ -352,7 +394,7 @@
 			                            <input id="nombres"
 			                                   type="text"
 			                                   class="form-control"
-			                                   th:field="*{nombres}">
+			                                   th:field="*{nombres}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
@@ -360,7 +402,7 @@
 			                            <input id="apellidos"
 			                                   type="text"
 			                                   class="form-control"
-			                                   th:field="*{apellidos}">
+			                                   th:field="*{apellidos}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
@@ -368,7 +410,7 @@
 			                            <input id="telefono"
 			                                   type="text"
 			                                   class="form-control"
-			                                   th:field="*{telefono}">
+			                                   th:field="*{telefono}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
@@ -376,7 +418,7 @@
 			                            <input id="correo"
 			                                   type="email"
 			                                   class="form-control"
-			                                   th:field="*{correo}">
+			                                   th:field="*{correo}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
@@ -384,14 +426,14 @@
 			                            <input id="direccion"
 			                                   type="text"
 			                                   class="form-control"
-			                                   th:field="*{direccion}">
+			                                   th:field="*{direccion}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
 			                            <label>Estado</label>
 			                            <select id="estado"
 			                                    class="form-select"
-			                                    th:field="*{estado}">
+			                                    th:field="*{estado}" required>
 			                                <option value="Registrado">Registrado</option>
 			                                <option value="Activo">Activo</option>
 			                                <option value="Inactivo">Inactivo</option>
@@ -441,6 +483,16 @@
 						    Nueva matrícula
 						</button>
 		            </div>
+					
+					<div id="msgmatricula"
+							th:if="${msg}"
+						class="alert alert-success alert-dismissible fade show">
+								    <span th:text="${msg}"></span>
+								    <button type="button"
+								            class="btn-close"
+								            data-bs-dismiss="alert">
+								    </button>
+					</div>
 
 		            <table id="tablaMatriculas" class="table table-bordered table-hover table-striped">
 		                <thead class="table-dark">
@@ -470,7 +522,15 @@
 
 		                        <td th:text="${m.monto}"></td>
 
-		                        <td th:text="${m.estado}"></td>
+		                        <td>
+									
+									<span class="badge"
+									      th:classappend="${m.estado == 'Pagada'} ? 
+									                      ' bg-success' : 
+									                      (${m.estado == 'Pendiente de Pago'} ? ' bg-warning text-dark' : ' bg-danger')"
+									      th:text="${m.estado}">
+									</span>
+								</td>
 
 		                        <td>
 									<button class="btn btn-warning btn-sm btnEditarMatricula"
@@ -520,7 +580,7 @@
 			                            <label>Estudiante</label>
 			                            <select id="estudiante"
 			                                    class="form-select"
-			                                    th:field="*{estudiante.idEstudiante}">
+			                                    th:field="*{estudiante.idEstudiante}" required>
 			                                <option value="0">Seleccione estudiante</option>
 			                                <option th:each="e : ${estudiantes}"
 			                                        th:value="${e.idEstudiante}"
@@ -533,7 +593,7 @@
 			                            <label>Curso y horario</label>
 			                            <select id="cursoHorario"
 			                                    class="form-select"
-			                                    th:field="*{cursoHorario.idCursoHorario}">
+			                                    th:field="*{cursoHorario.idCursoHorario}" required>
 			                                <option value="0">Seleccione curso y horario</option>
 			                                <option th:each="ch : ${cursoHorarios}"
 			                                        th:value="${ch.idCursoHorario}"
@@ -547,7 +607,7 @@
 			                            <input id="fechaMatricula"
 			                                   type="datetime-local"
 			                                   class="form-control"
-			                                   th:field="*{fechaMatricula}">
+			                                   th:field="*{fechaMatricula}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
@@ -556,14 +616,14 @@
 			                                   type="number"
 			                                   step="0.01"
 			                                   class="form-control"
-			                                   th:field="*{monto}">
+			                                   th:field="*{monto}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
 			                            <label>Estado</label>
 			                            <select id="estadoMatricula"
 			                                    class="form-select"
-			                                    th:field="*{estado}">
+			                                    th:field="*{estado}" required>
 			                                <option value="Pendiente de Pago">Pendiente de Pago</option>
 			                                <option value="Pagada">Pagada</option>
 			                                <option value="Anulada">Anulada</option>
@@ -611,6 +671,16 @@
 						    Nuevo curso
 						</button>
 		            </div>
+					
+					<div id="msgcurso"
+							th:if="${msg}"
+						class="alert alert-success alert-dismissible fade show">
+								    <span th:text="${msg}"></span>
+								    <button type="button"
+								            class="btn-close"
+								            data-bs-dismiss="alert">
+								    </button>
+					</div>
 
 		            <table id="tablaCursos" class="table table-bordered table-hover table-striped">
 		                <thead class="table-dark">
@@ -632,7 +702,14 @@
 		                        <td th:text="${c.nombre}"></td>
 		                        <td th:text="${c.descripcion}"></td>
 		                        <td th:text="${c.costo}"></td>
-		                        <td th:text="${c.estado}"></td>
+		                        <td>
+									
+									<span class="badge" th:classappend="${c.estado=='Activo'} ?
+													' bg-success':
+												     ' bg-danger'"
+									 th:text="${c.estado}">
+									</span>
+								</td>
 
 		                        <td>
 									<button class="btn btn-warning btn-sm btnEditarCurso"
@@ -681,7 +758,7 @@
 			                            <label>Categoría</label>
 			                            <select id="categoria"
 			                                    class="form-select"
-			                                    th:field="*{categoria.idCategoria}">
+			                                    th:field="*{categoria.idCategoria}" required>
 			                                <option value="0">Seleccione categoría</option>
 			                                <option th:each="cat : ${categorias}"
 			                                        th:value="${cat.idCategoria}"
@@ -695,7 +772,7 @@
 			                            <input id="nombreCurso"
 			                                   type="text"
 			                                   class="form-control"
-			                                   th:field="*{nombre}">
+			                                   th:field="*{nombre}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
@@ -704,14 +781,14 @@
 			                                   type="number"
 			                                   step="0.01"
 			                                   class="form-control"
-			                                   th:field="*{costo}">
+			                                   th:field="*{costo}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
 			                            <label>Estado</label>
 			                            <select id="estadoCurso"
 			                                    class="form-select"
-			                                    th:field="*{estado}">
+			                                    th:field="*{estado}" required>
 			                                <option value="Activo">Activo</option>
 			                                <option value="Inactivo">Inactivo</option>
 			                            </select>
@@ -721,7 +798,7 @@
 			                            <label>Descripción</label>
 			                            <textarea id="descripcion"
 			                                      class="form-control"
-			                                      th:field="*{descripcion}">
+			                                      th:field="*{descripcion}" required>
 			                            </textarea>
 			                        </div>
 
@@ -766,6 +843,16 @@
 						    Nuevo horario
 						</button>
 		            </div>
+					
+					<div id="msghorario"
+							th:if="${msg}"
+						class="alert alert-success alert-dismissible fade show">
+								    <span th:text="${msg}"></span>
+								    <button type="button"
+								            class="btn-close"
+								            data-bs-dismiss="alert">
+								    </button>
+					</div>
 
 		            <table id="tablaHorarios" class="table table-bordered table-hover table-striped">
 		                <thead class="table-dark">
@@ -787,7 +874,14 @@
 		                        <td th:text="${h.diaSemana}"></td>
 		                        <td th:text="${h.horaInicio}"></td>
 		                        <td th:text="${h.horaFin}"></td>
-		                        <td th:text="${h.estado}"></td>
+		                        <td>
+									
+									<span class="badge" th:classappend="${h.estado=='Activo'} ?
+													' bg-success':
+												     ' bg-danger'"
+									 th:text="${h.estado}">
+									</span>
+								</td>
 
 		                        <td>
 									<button class="btn btn-warning btn-sm btnEditarHorario"
@@ -837,7 +931,7 @@
 			                            <input id="descripcionHorario"
 			                                   type="text"
 			                                   class="form-control"
-			                                   th:field="*{descripcion}">
+			                                   th:field="*{descripcion}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
@@ -845,7 +939,7 @@
 			                            <input id="diaSemana"
 			                                   type="text"
 			                                   class="form-control"
-			                                   th:field="*{diaSemana}">
+			                                   th:field="*{diaSemana}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
@@ -853,7 +947,7 @@
 			                            <input id="horaInicio"
 			                                   type="time"
 			                                   class="form-control"
-			                                   th:field="*{horaInicio}">
+			                                   th:field="*{horaInicio}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
@@ -861,14 +955,14 @@
 			                            <input id="horaFin"
 			                                   type="time"
 			                                   class="form-control"
-			                                   th:field="*{horaFin}">
+			                                   th:field="*{horaFin}" required>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
 			                            <label>Estado</label>
 			                            <select id="estadoHorario"
 			                                    class="form-select"
-			                                    th:field="*{estado}">
+			                                    th:field="*{estado}" required>
 			                                <option value="Activo">Activo</option>
 			                                <option value="Inactivo">Inactivo</option>
 			                            </select>
@@ -913,6 +1007,16 @@
 		                    Nuevo curso horario
 		                </button>
 		            </div>
+					
+					<div id="msgcursoHorario"
+							th:if="${msg}"
+						class="alert alert-success alert-dismissible fade show">
+								    <span th:text="${msg}"></span>
+								    <button type="button"
+								            class="btn-close"
+								            data-bs-dismiss="alert">
+								    </button>
+					</div>
 
 		            <table id="tablaCursoHorarios"
 		                   class="table table-bordered table-hover table-striped">
@@ -939,7 +1043,14 @@
 		                        <td th:text="${ch.horario.horaInicio}"></td>
 		                        <td th:text="${ch.horario.horaFin}"></td>
 		                        <td th:text="${ch.vacantes}"></td>
-		                        <td th:text="${ch.estado}"></td>
+								<td>
+								    <span class="badge"
+								          th:classappend="${ch.estado == 'Disponible'} ? 
+								                          ' bg-success' : 
+								                          (${ch.estado == 'Sin Vacantes'} ? ' bg-warning text-dark' : ' bg-danger')"
+								          th:text="${ch.estado}">
+								    </span>
+								</td>
 
 		                        <td>
 		                            <button class="btn btn-warning btn-sm btnEditarCursoHorario"
@@ -991,8 +1102,8 @@
 		                                <label>Curso</label>
 		                                <select id="cursoCH"
 		                                        class="form-select"
-		                                        th:field="*{curso.idCurso}">
-		                                    <option value="0">Seleccione curso</option>
+		                                        th:field="*{curso.idCurso}" required>
+		                                    <option value="">Seleccione curso</option>
 		                                    <option th:each="c : ${cursos}"
 		                                            th:value="${c.idCurso}"
 		                                            th:text="${c.nombre}">
@@ -1004,8 +1115,8 @@
 		                                <label>Horario</label>
 		                                <select id="horarioCH"
 		                                        class="form-select"
-		                                        th:field="*{horario.idHorario}">
-		                                    <option value="0">Seleccione horario</option>
+		                                        th:field="*{horario.idHorario}" required>
+		                                    <option value="">Seleccione horario</option>
 		                                    <option th:each="h : ${horarios}"
 		                                            th:value="${h.idHorario}"
 		                                            th:text="${h.descripcion + ' - ' + h.diaSemana + ' - ' + h.horaInicio + ' a ' + h.horaFin}">
@@ -1018,14 +1129,14 @@
 		                                <input id="vacantesCH"
 		                                       type="number"
 		                                       class="form-control"
-		                                       th:field="*{vacantes}">
+		                                       th:field="*{vacantes}" required>
 		                            </div>
 
 		                            <div class="col-md-6 mb-3">
 		                                <label>Estado</label>
 		                                <select id="estadoCH"
 		                                        class="form-select"
-		                                        th:field="*{estado}">
+		                                        th:field="*{estado}" required>
 		                                    <option value="Disponible">Disponible</option>
 		                                    <option value="Inactivo">Inactivo</option>
 		                                    <option value="Sin Vacantes">Sin Vacantes</option>
@@ -1361,6 +1472,57 @@
 	   });
 </script>
 
+<script>
+setTimeout(function() {
+	let mensaje = document.getElementById("msgestudiante");
+	if(mensaje){
+		let alerta =new bootstrap.Alert(mensaje);
+	alerta.close();
+	}
+}, 3000);
+
+setTimeout(function() {
+	let mensaje = document.getElementById("msgusuario");
+	if(mensaje){
+		let alerta =new bootstrap.Alert(mensaje);
+	alerta.close();
+	}
+}, 3000);
+
+setTimeout(function() {
+	let mensaje = document.getElementById("msgmatricula");
+	if(mensaje){
+		let alerta =new bootstrap.Alert(mensaje);
+	alerta.close();
+	}
+}, 3000);
+
+setTimeout(function() {
+	let mensaje = document.getElementById("msgcurso");
+	if(mensaje){
+		let alerta =new bootstrap.Alert(mensaje);
+	alerta.close();
+	}
+}, 3000);
+
+setTimeout(function() {
+	let mensaje = document.getElementById("msghorario");
+	if(mensaje){
+		let alerta =new bootstrap.Alert(mensaje);
+	alerta.close();
+	}
+}, 3000);
+
+setTimeout(function() {
+	let mensaje = document.getElementById("msgcursoHorario");
+	if(mensaje){
+		let alerta =new bootstrap.Alert(mensaje);
+	alerta.close();
+	}
+}, 3000);
+
+
+</script>
 
 
 
