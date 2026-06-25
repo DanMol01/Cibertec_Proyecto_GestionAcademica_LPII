@@ -591,15 +591,18 @@
 
 			                        <div class="col-md-6 mb-3">
 			                            <label>Curso y horario</label>
-			                            <select id="cursoHorario"
-			                                    class="form-select"
-			                                    th:field="*{cursoHorario.idCursoHorario}" required>
-			                                <option value="0">Seleccione curso y horario</option>
-			                                <option th:each="ch : ${cursoHorarios}"
-			                                        th:value="${ch.idCursoHorario}"
-			                                        th:text="${ch.curso.nombre + ' - ' + ch.horario.descripcion + ' - Vacantes: ' + ch.vacantes}">
-			                                </option>
-			                            </select>
+										<select id="cursoHorario"
+										        class="form-select"
+										        th:field="*{cursoHorario.idCursoHorario}"
+										        required>
+										    <option value="">Seleccione curso y horario</option>
+
+										    <option th:each="ch : ${cursoHorarios}"
+										            th:value="${ch.idCursoHorario}"
+										            th:data-costo="${ch.curso.costo}"
+										            th:text="${ch.curso.nombre + ' - ' + ch.horario.descripcion + ' - Vacantes: ' + ch.vacantes}">
+										    </option>
+										</select>
 			                        </div>
 
 			                        <div class="col-md-6 mb-3">
@@ -1176,6 +1179,29 @@
 
 <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
 
+<script>
+    $(document).on("change", "#cursoHorario", function() {
+        let costo = $(this).find(":selected").data("costo");
+
+        if (costo !== undefined && costo !== null && costo !== "") {
+            $("#monto").val(costo);
+        } else {
+            $("#monto").val("");
+        }
+    });
+	
+	$(document).on("click", "#btnNuevaMatricula", function() {
+	    $("#tituloModalMatricula").text("Nueva Matrícula");
+	    $("#frmMatricula").attr("action", "/gestionmatricula/registrar");
+
+	    $("#idMatricula").val("");
+	    $("#estudiante").val("");
+	    $("#cursoHorario").val("");
+	    $("#fechaMatricula").val("");
+	    $("#monto").val("");
+	    $("#estadoMatricula").val("Pendiente de Pago");
+	});
+</script>
 
 
 <script>
